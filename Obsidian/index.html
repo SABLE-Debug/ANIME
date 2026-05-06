@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AKHARA — The Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;1,200;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #080707;
+  --white: #f0ece4;
+  --gold: #C9A84C;
+  --gold2: #B8964E;
+  --sand: #C49A6C;
+  --ivory: #E8D5B0;
+  --br: #2C1A0E;
+  --base: https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/;
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+body {
+background: var(–black);
+color: var(–white);
+font-family: ‘Cormorant Garamond’, serif;
+overflow-x: hidden;
+cursor: none;
+}
+
+/* CURSOR */
+#cur { position: fixed; width: 6px; height: 6px; background: var(–gold); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%,-50%); transition: transform 0.15s, opacity 0.15s; }
+#cur-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(201,168,76,0.3); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%,-50%); transition: border-color 0.3s; }
+body:hover #cur { opacity: 1; }
+
+/* LOADER */
+#loader {
+position: fixed; inset: 0; z-index: 99990;
+background: var(–black);
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+transition: opacity 1.2s ease, visibility 1.2s ease;
+}
+#loader.out { opacity: 0; visibility: hidden; pointer-events: none; }
+.l-logo { opacity: 0; animation: fadeIn 1s ease 0.2s forwards; }
+.l-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 11px; letter-spacing: 0.55em; color: rgba(255,255,255,0.25);
+text-transform: uppercase; margin-top: 28px;
+opacity: 0; animation: fadeIn 1s ease 0.6s forwards;
+}
+.l-bar-wrap { width: 120px; height: 1px; background: rgba(255,255,255,0.06); margin-top: 40px; overflow: hidden; opacity: 0; animation: fadeIn 0.5s ease 0.4s forwards; }
+.l-bar { height: 100%; width: 0; background: var(–gold); transition: width 0.08s linear; }
+.l-pct { font-family: ‘DM Mono’, monospace; font-size: 10px; color: rgba(201,168,76,0.4); margin-top: 10px; letter-spacing: 0.15em; opacity: 0; animation: fadeIn 0.5s ease 0.4s forwards; }
+
+/* PROGRESS */
+#prog { position: fixed; top: 0; left: 0; height: 1px; background: var(–gold); z-index: 9999; width: 0; transition: width 0.1s linear; opacity: 0.6; }
+
+/* GRAIN */
+body::before { content: ‘’; position: fixed; inset: 0; background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=‘0.04’/%3E%3C/svg%3E”); pointer-events: none; z-index: 9996; opacity: 0.35; }
+
+/* NAV */
+nav {
+position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+padding: 32px 48px;
+display: flex; align-items: center; justify-content: space-between;
+mix-blend-mode: normal;
+}
+.nav-left { display: flex; align-items: center; gap: 14px; }
+.nav-wordmark { display: flex; flex-direction: column; }
+.nav-brand { font-family: ‘Cormorant Garamond’, serif; font-size: 16px; letter-spacing: 0.18em; font-weight: 300; color: var(–white); line-height: 1; }
+.nav-sub { font-family: ‘DM Mono’, monospace; font-size: 7px; letter-spacing: 0.22em; color: rgba(201,168,76,0.6); text-transform: uppercase; margin-top: 3px; }
+.nav-right { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.2em; color: rgba(255,255,255,0.2); text-transform: uppercase; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(–black); }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); }
+
+/* ======================== SECTIONS ======================== */
+
+/* HERO */
+#hero {
+height: 100vh; position: relative;
+display: flex; align-items: flex-end;
+overflow: hidden;
+}
+.hero-bg {
+position: absolute; inset: 0;
+background: url(‘https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6519.WEBP’) center center / cover no-repeat;
+will-change: transform;
+transform: scale(1.08);
+transition: transform 0.1s linear;
+}
+.hero-vignette {
+position: absolute; inset: 0;
+background: linear-gradient(to top, rgba(8,7,7,0.98) 0%, rgba(8,7,7,0.5) 40%, rgba(8,7,7,0.1) 100%);
+z-index: 1;
+}
+.hero-content {
+position: relative; z-index: 2;
+padding: 0 48px 80px;
+width: 100%;
+}
+.hero-label {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px; letter-spacing: 0.35em; color: rgba(201,168,76,0.5);
+text-transform: uppercase; margin-bottom: 20px;
+opacity: 0; animation: fadeIn 1s ease 1.8s forwards;
+}
+.hero-h1 {
+font-size: clamp(56px, 10vw, 140px);
+font-weight: 200; line-height: 0.9;
+letter-spacing: -0.01em;
+opacity: 0; animation: heroReveal 1.4s cubic-bezier(.16,1,.3,1) 1.4s forwards;
+}
+.hero-h1 em { color: var(–gold); font-style: italic; }
+.hero-sub {
+font-size: clamp(14px, 1.4vw, 18px);
+color: rgba(255,255,255,0.35);
+margin-top: 24px; max-width: 480px;
+line-height: 1.7; font-weight: 300; font-style: italic;
+opacity: 0; animation: fadeIn 1s ease 2s forwards;
+}
+.hero-scroll {
+position: absolute; bottom: 80px; right: 48px; z-index: 2;
+display: flex; flex-direction: column; align-items: center; gap: 10px;
+opacity: 0; animation: fadeIn 1s ease 2.4s forwards;
+}
+.hero-scroll span { font-family: ‘DM Mono’, monospace; font-size: 8px; letter-spacing: 0.3em; color: rgba(255,255,255,0.2); text-transform: uppercase; writing-mode: vertical-rl; }
+.hero-scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.4)); animation: scrollLine 2s ease infinite; }
+
+/* CHAPTER DIVIDER */
+.chapter {
+padding: 140px 48px;
+position: relative;
+}
+.chapter-num {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px; letter-spacing: 0.35em;
+color: rgba(201,168,76,0.35); text-transform: uppercase;
+margin-bottom: 20px;
+display: flex; align-items: center; gap: 16px;
+}
+.chapter-num::after { content: ‘’; flex: 1; height: 1px; background: rgba(201,168,76,0.1); max-width: 60px; }
+.chapter-h { font-size: clamp(42px, 6vw, 88px); font-weight: 200; line-height: 0.92; letter-spacing: -0.01em; }
+.chapter-h em { color: var(–gold); font-style: italic; }
+
+/* FULL IMAGE */
+.full-img-section {
+position: relative; overflow: hidden;
+}
+.full-img {
+width: 100%; height: 70vh;
+object-fit: cover; object-position: center;
+display: block;
+transform: scale(1.05);
+transition: transform 0.1s linear;
+will-change: transform;
+}
+.full-img-caption {
+position: absolute; bottom: 32px; left: 48px;
+font-family: ‘DM Mono’, monospace;
+font-size: 9px; letter-spacing: 0.25em; color: rgba(255,255,255,0.2);
+text-transform: uppercase;
+}
+
+/* TEXT BLOCK */
+.text-block { padding: 80px 48px; max-width: 720px; }
+.text-block p {
+font-size: clamp(16px, 1.6vw, 22px);
+color: rgba(255,255,255,0.55);
+line-height: 1.8; font-weight: 300;
+margin-bottom: 24px;
+}
+.text-block p strong { color: var(–ivory); font-weight: 400; }
+.text-block p em { color: var(–gold); font-style: italic; }
+
+/* REVEAL TEXT — splits into lines */
+.reveal-text { overflow: hidden; }
+.reveal-text .line { display: block; transform: translateY(100%); opacity: 0; transition: transform 0.9s cubic-bezier(.16,1,.3,1), opacity 0.9s ease; }
+.reveal-text.in .line { transform: translateY(0); opacity: 1; }
+.reveal-text.in .line:nth-child(2) { transition-delay: 0.1s; }
+.reveal-text.in .line:nth-child(3) { transition-delay: 0.2s; }
+.reveal-text.in .line:nth-child(4) { transition-delay: 0.3s; }
+
+/* FADE REVEAL */
+.fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.16,1,.3,1); }
+.fade-up.in { opacity: 1; transform: translateY(0); }
+.fade-up.d1 { transition-delay: 0.1s; }
+.fade-up.d2 { transition-delay: 0.2s; }
+.fade-up.d3 { transition-delay: 0.3s; }
+.fade-up.d4 { transition-delay: 0.4s; }
+.fade-up.d5 { transition-delay: 0.5s; }
+.fade-up.d6 { transition-delay: 0.6s; }
+
+/* CURTAIN REVEAL */
+.curtain { clip-path: inset(0 100% 0 0); transition: clip-path 1.2s cubic-bezier(.77,0,.18,1); }
+.curtain.in { clip-path: inset(0 0% 0 0); }
+
+/* STATS ROW */
+.stats-row {
+display: grid; grid-template-columns: repeat(4, 1fr);
+border-top: 1px solid rgba(255,255,255,0.06);
+border-left: 1px solid rgba(255,255,255,0.06);
+margin: 0 48px;
+}
+.stat-item {
+padding: 40px 32px;
+border-right: 1px solid rgba(255,255,255,0.06);
+border-bottom: 1px solid rgba(255,255,255,0.06);
+transition: background 0.3s;
+}
+.stat-item:hover { background: rgba(201,168,76,0.03); }
+.stat-n { font-family: ‘Cormorant Garamond’, serif; font-size: clamp(44px, 5vw, 72px); color: var(–gold); font-weight: 200; line-height: 1; }
+.stat-l { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.2em; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-top: 10px; }
+
+/* PROBLEM LIST */
+.problem-list { padding: 0 48px; display: flex; flex-direction: column; gap: 1px; }
+.p-row {
+display: grid; grid-template-columns: 60px 1fr;
+padding: 28px 0;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+transition: all 0.3s;
+gap: 24px;
+align-items: start;
+}
+.p-row:hover { padding-left: 8px; }
+.p-n { font-family: ‘DM Mono’, monospace; font-size: 10px; color: rgba(201,168,76,0.3); padding-top: 4px; letter-spacing: 0.1em; }
+.p-body {}
+.p-title { font-family: ‘Cormorant Garamond’, serif; font-size: clamp(20px, 2.5vw, 32px); font-weight: 300; color: var(–ivory); margin-bottom: 8px; }
+.p-desc { font-size: 14px; color: rgba(255,255,255,0.35); line-height: 1.7; font-weight: 300; max-width: 560px; }
+
+/* TIER SYSTEM — Obsidian style horizontal scroll */
+.tiers-intro { padding: 140px 48px 60px; }
+.tiers-scroll-wrap { overflow-x: auto; padding: 0 48px 60px; scrollbar-width: none; }
+.tiers-scroll-wrap::-webkit-scrollbar { display: none; }
+.tiers-track { display: flex; gap: 2px; min-width: max-content; }
+.tier-panel {
+width: 320px; flex-shrink: 0;
+border: 1px solid rgba(255,255,255,0.06);
+display: flex; flex-direction: column;
+transition: all 0.4s; cursor: none; position: relative; overflow: hidden;
+}
+.tier-panel:hover { border-color: rgba(201,168,76,0.25); }
+.tier-img { width: 100%; height: 360px; object-fit: cover; object-position: top center; display: block; transition: transform 0.6s ease; filter: grayscale(15%); }
+.tier-panel:hover .tier-img { transform: scale(1.04); filter: grayscale(0%); }
+.tier-img-fade { position: absolute; top: 0; left: 0; right: 0; height: 360px; background: linear-gradient(to bottom, transparent 50%, var(–black) 100%); }
+.tier-body { padding: 28px 24px 32px; flex: 1; display: flex; flex-direction: column; }
+.tier-rank { font-family: ‘DM Mono’, monospace; font-size: 8px; letter-spacing: 0.3em; color: rgba(201,168,76,0.4); text-transform: uppercase; margin-bottom: 10px; }
+.tier-name { font-family: ‘Cormorant Garamond’, serif; font-size: 32px; font-weight: 200; color: var(–white); line-height: 1; }
+.tier-price { font-family: ‘Cormorant Garamond’, serif; font-size: 28px; color: var(–gold); font-weight: 200; margin-top: 14px; }
+.tier-price small { font-size: 13px; color: rgba(201,168,76,0.5); font-style: italic; }
+.tier-line { width: 32px; height: 1px; margin: 16px 0; }
+.tier-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.65; font-weight: 300; flex: 1; }
+.tier-feats { margin-top: 20px; display: flex; flex-direction: column; gap: 7px; }
+.tier-feat { font-family: ‘DM Mono’, monospace; font-size: 9px; color: rgba(255,255,255,0.25); display: flex; gap: 10px; }
+.tier-feat::before { content: ‘/’; color: var(–gold); opacity: 0.4; }
+
+/* ROLES GRID */
+.roles-wrap { padding: 0 48px 140px; }
+.roles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 48px; border: 1px solid rgba(255,255,255,0.05); }
+.role-item {
+padding: 32px 24px;
+border-right: 1px solid rgba(255,255,255,0.05);
+transition: background 0.3s;
+}
+.role-item:last-child { border-right: none; }
+.role-item:hover { background: rgba(201,168,76,0.03); }
+.role-symbol { font-size: 20px; color: rgba(201,168,76,0.3); margin-bottom: 14px; }
+.role-name { font-family: ‘Cormorant Garamond’, serif; font-size: 20px; font-weight: 300; color: var(–ivory); margin-bottom: 10px; }
+.role-desc { font-family: ‘DM Mono’, monospace; font-size: 9px; color: rgba(255,255,255,0.25); line-height: 1.65; letter-spacing: 0.04em; }
+
+/* STACK */
+.stack-wrap { padding: 0 48px 140px; }
+.stack-list { display: flex; flex-direction: column; gap: 1px; margin-top: 48px; }
+.stack-row {
+display: grid; grid-template-columns: 200px 1fr 120px;
+padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+gap: 32px; align-items: start; transition: all 0.3s;
+}
+.stack-row:hover { padding-left: 8px; }
+.s-name { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 300; color: var(–ivory); }
+.s-role { font-family: ‘DM Mono’, monospace; font-size: 8px; letter-spacing: 0.2em; color: rgba(201,168,76,0.4); text-transform: uppercase; margin-top: 4px; }
+.s-desc { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.6; }
+.s-cost { font-family: ‘DM Mono’, monospace; font-size: 10px; color: rgba(255,255,255,0.2); text-align: right; padding-top: 4px; }
+
+/* BUILD STEPS */
+.build-wrap { padding: 0 48px 140px; }
+.build-list { display: flex; flex-direction: column; gap: 1px; margin-top: 48px; }
+.build-row {
+display: grid; grid-template-columns: 80px 1fr;
+padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+gap: 32px; align-items: start; transition: all 0.3s;
+}
+.build-row:hover { padding-left: 8px; }
+.b-num { font-family: ‘Cormorant Garamond’, serif; font-size: 56px; color: rgba(201,168,76,0.1); font-weight: 200; line-height: 1; }
+.b-title { font-family: ‘Cormorant Garamond’, serif; font-size: clamp(20px, 2.5vw, 30px); font-weight: 300; color: var(–ivory); margin-bottom: 10px; }
+.b-desc { font-size: 14px; color: rgba(255,255,255,0.35); line-height: 1.7; max-width: 600px; }
+
+/* AVATAR GRID */
+.avatars-wrap { padding: 140px 48px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+.av-item { position: relative; aspect-ratio: 3/4; overflow: hidden; cursor: none; }
+.av-img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.7s ease, filter 0.5s ease; filter: grayscale(20%) brightness(0.9); }
+.av-item:hover .av-img { transform: scale(1.06); filter: grayscale(0%) brightness(1); }
+.av-veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,7,7,0.95) 0%, transparent 50%); opacity: 0; transition: opacity 0.4s; }
+.av-item:hover .av-veil { opacity: 1; }
+.av-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 18px; transform: translateY(12px); opacity: 0; transition: all 0.4s; }
+.av-item:hover .av-info { transform: translateY(0); opacity: 1; }
+.av-name { font-family: ‘Cormorant Garamond’, serif; font-size: 20px; font-weight: 300; color: var(–white); }
+.av-role { font-family: ‘DM Mono’, monospace; font-size: 8px; letter-spacing: 0.2em; color: var(–gold); opacity: 0.7; text-transform: uppercase; margin-top: 4px; }
+
+/* CLIENT SECTION */
+.client-wrap { padding: 0 48px 140px; }
+.client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+.col-label { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.3em; color: rgba(201,168,76,0.4); text-transform: uppercase; margin-bottom: 24px; }
+.target-list { display: flex; flex-direction: column; }
+.t-row { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
+.t-row:hover { padding-left: 8px; }
+.t-name { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 300; color: var(–ivory); margin-bottom: 6px; }
+.t-desc { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.6; }
+.close-list { display: flex; flex-direction: column; gap: 1px; }
+.c-row { display: grid; grid-template-columns: 40px 1fr; gap: 20px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
+.c-row:hover { padding-left: 8px; }
+.c-n { font-family: ‘Cormorant Garamond’, serif; font-size: 32px; color: rgba(201,168,76,0.15); font-weight: 200; line-height: 1; }
+.c-title { font-family: ‘Cormorant Garamond’, serif; font-size: 18px; font-weight: 300; color: var(–ivory); display: block; margin-bottom: 6px; }
+.c-text { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.65; }
+
+/* GROWTH TABLE */
+.growth-wrap { padding: 0 48px 140px; }
+.g-table { width: 100%; border-collapse: collapse; margin-top: 60px; }
+.g-table th { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.25em; color: rgba(201,168,76,0.35); text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.g-table td { padding: 20px 16px; font-size: 14px; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; line-height: 1.6; transition: all 0.3s; }
+.g-table tr:hover td { color: rgba(255,255,255,0.7); background: rgba(201,168,76,0.02); }
+.g-table td:first-child { font-family: ‘Cormorant Garamond’, serif; font-size: 20px; color: var(–gold); font-weight: 200; }
+.g-table td.rev { font-family: ‘Cormorant Garamond’, serif; font-size: 20px; color: var(–sand); font-style: italic; }
+.insights { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.05); }
+.insight-item { padding: 32px 24px; border-right: 1px solid rgba(255,255,255,0.05); transition: background 0.3s; }
+.insight-item:last-child { border-right: none; }
+.insight-item:hover { background: rgba(201,168,76,0.02); }
+.i-title { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.2em; color: rgba(201,168,76,0.4); text-transform: uppercase; margin-bottom: 12px; }
+.i-text { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.7; }
+
+/* BRAND SPEC */
+.brand-wrap { padding: 0 48px 140px; position: relative; }
+.brand-bg { position: absolute; inset: 0; background: url(‘https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6521.WEBP’) center / cover no-repeat; opacity: 0.06; }
+.brand-content { position: relative; z-index: 2; }
+.brand-specs { display: flex; flex-direction: column; gap: 1px; margin-top: 60px; }
+.b-row { display: grid; grid-template-columns: 160px 1fr; gap: 32px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
+.b-row:hover { padding-left: 8px; }
+.b-key { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.2em; color: rgba(201,168,76,0.35); text-transform: uppercase; padding-top: 3px; }
+.b-val { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.65; }
+.swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.sw { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: none; }
+.sw:hover { transform: scale(1.4); }
+
+/* GLASS DISTORTION PANELS — CSS only */
+.glass-panel {
+background: rgba(8,7,7,0.4);
+backdrop-filter: blur(28px) saturate(150%);
+-webkit-backdrop-filter: blur(28px) saturate(150%);
+border: 1px solid rgba(255,255,255,0.06);
+border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* SETUP NOTE */
+.setup-note { margin: 0 48px 2px; padding: 24px 32px; display: flex; gap: 24px; align-items: flex-start; border: 1px solid rgba(201,168,76,0.1); }
+.sn-label { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.25em; color: rgba(201,168,76,0.5); text-transform: uppercase; white-space: nowrap; padding-top: 2px; }
+.sn-text { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.65; }
+
+/* HORIZONTAL RULE */
+.hr { height: 1px; background: rgba(255,255,255,0.05); margin: 0 48px; }
+
+/* FOOTER */
+footer { padding: 80px 48px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.05); }
+.f-left {}
+.f-brand { font-family: ‘Cormorant Garamond’, serif; font-size: 11px; letter-spacing: 0.3em; color: rgba(255,255,255,0.12); font-weight: 300; text-transform: uppercase; }
+.f-tag { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.2em; color: rgba(201,168,76,0.2); text-transform: uppercase; margin-top: 8px; line-height: 1.8; }
+.f-right { text-align: right; }
+
+/* LARGE BG WORD */
+.bg-word { position: absolute; font-family: ‘Cormorant Garamond’, serif; font-size: clamp(100px, 18vw, 260px); color: rgba(201,168,76,0.018); font-weight: 200; pointer-events: none; letter-spacing: 0.05em; white-space: nowrap; z-index: 0; line-height: 1; }
+
+/* ANIMATIONS */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes heroReveal { from { opacity: 0; transform: translateY(48px); filter: blur(8px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes scrollLine { 0%,100% { opacity: 0.2; transform: scaleY(0.8); } 50% { opacity: 0.8; transform: scaleY(1); } }
+
+@media(max-width: 900px) {
+nav { padding: 24px; }
+.chapter, .tiers-intro, .avatars-wrap, .client-wrap, .growth-wrap, .brand-wrap, .stack-wrap, .build-wrap, .roles-wrap { padding-left: 24px; padding-right: 24px; }
+.stats-row { grid-template-columns: 1fr 1fr; margin: 0 24px; }
+.problem-list, .setup-note, .hr { padding-left: 24px; padding-right: 24px; margin-left: 0; margin-right: 0; }
+.tiers-scroll-wrap { padding: 0 24px 60px; }
+.roles-grid { grid-template-columns: 1fr 1fr; }
+.avatar-grid { grid-template-columns: 1fr 1fr; }
+.client-grid { grid-template-columns: 1fr; gap: 48px; }
+.insights { grid-template-columns: 1fr; }
+.stack-row { grid-template-columns: 1fr; gap: 8px; }
+.s-cost { text-align: left; }
+.b-row { grid-template-columns: 1fr; gap: 8px; }
+footer { padding: 60px 24px; flex-direction: column; gap: 24px; }
+.f-right { text-align: left; }
+.full-img-caption { left: 24px; }
+}
+</style>
+
+</head>
+<body>
+
+<div id="loader">
+  <div class="l-logo">
+    <svg viewBox="0 0 512 560" width="56" height="64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="256" cy="272" r="168" stroke="#B8964E" stroke-width="1.6" fill="none"/>
+      <circle cx="256" cy="272" r="108" stroke="#B8964E" stroke-width="1.2" fill="none"/>
+      <line x1="256" y1="88" x2="256" y2="480" stroke="#B8964E" stroke-width="1.4"/>
+      <line x1="64" y1="272" x2="448" y2="272" stroke="#B8964E" stroke-width="1.2"/>
+      <line x1="196" y1="210" x2="316" y2="210" stroke="#B8964E" stroke-width="1" opacity="0.8"/>
+      <circle cx="256" cy="96" r="9" fill="#B8964E"/>
+    </svg>
+  </div>
+  <div class="l-name">AKHARA</div>
+  <div class="l-bar-wrap"><div class="l-bar" id="lBar"></div></div>
+  <div class="l-pct" id="lPct">0%</div>
+</div>
+
+<div id="prog"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<nav>
+  <div class="nav-left">
+    <svg viewBox="0 0 512 560" width="28" height="32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="256" cy="272" r="168" stroke="#B8964E" stroke-width="1.6" fill="none"/>
+      <circle cx="256" cy="272" r="108" stroke="#B8964E" stroke-width="1.2" fill="none"/>
+      <line x1="256" y1="88" x2="256" y2="480" stroke="#B8964E" stroke-width="1.4"/>
+      <line x1="64" y1="272" x2="448" y2="272" stroke="#B8964E" stroke-width="1.2"/>
+      <line x1="196" y1="210" x2="316" y2="210" stroke="#B8964E" stroke-width="1" opacity="0.8"/>
+      <circle cx="256" cy="96" r="9" fill="#B8964E"/>
+    </svg>
+    <div class="nav-wordmark">
+      <div class="nav-brand">AKHARA</div>
+      <div class="nav-sub">AI Employee Agency</div>
+    </div>
+  </div>
+  <div class="nav-right">Internal Playbook</div>
+</nav>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+
+<section id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="hero-label">[ AKHARA — Confidential Operating Manual ]</div>
+    <h1 class="hero-h1">The AI<br><em>Employee</em><br>Agency</h1>
+    <p class="hero-sub">From zero to $50,000 per month in recurring revenue. Read this once. Execute indefinitely.</p>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ VISION ═══════════════════════════════ -->
+
+<section style="position:relative;overflow:hidden;">
+  <span class="bg-word" style="bottom:-20px;right:-20px;">$50K</span>
+  <div class="chapter fade-up">
+    <div class="chapter-num" data-n="">01 &nbsp; The Vision</div>
+    <h2 class="chapter-h">What AKHARA<br><em>Actually Is</em></h2>
+  </div>
+  <div class="text-block fade-up d1">
+    <p>AKHARA is an <strong>AI Employee Agency</strong>. We don't sell software. We don't sell tools. We sell <em>employees</em> — intelligent systems that handle specific business roles 24 hours a day, embedded directly into client operations with no off switch.</p>
+    <p>The target is <em>$50,000 per month</em> in recurring retainer revenue. That requires 5 clients at an average of $10,000 per month. No audience required to reach them. No outreach required after the first 5. The brand builds the pipeline.</p>
+    <p>This document is the <strong>complete operating manual</strong>. Every section tells you exactly what to do, why it works, and what success looks like. Read it once. You will be able to replicate this from scratch.</p>
+  </div>
+</section>
+
+<div class="stats-row">
+  <div class="stat-item fade-up"><div class="stat-n">$50K</div><div class="stat-l">Monthly Target</div></div>
+  <div class="stat-item fade-up d1"><div class="stat-n">5</div><div class="stat-l">Clients Needed</div></div>
+  <div class="stat-item fade-up d2"><div class="stat-n">30</div><div class="stat-l">Days to First Client</div></div>
+  <div class="stat-item fade-up d3"><div class="stat-n">$10</div><div class="stat-l">Additional Monthly Cost</div></div>
+</div>
+
+<!-- ═══════════════════════════════ PROBLEM ═══════════════════════════════ -->
+
+<div class="full-img-section" style="margin-top:140px;">
+  <img class="full-img curtain" id="problemImg" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6518.JPG" alt="The Problem">
+  <div class="full-img-caption">02 — The Problem</div>
+</div>
+
+<section style="position:relative;overflow:hidden;">
+  <div class="chapter fade-up">
+    <div class="chapter-num">02 &nbsp; The Problem</div>
+    <h2 class="chapter-h">Why Businesses<br><em>Need Us</em></h2>
+  </div>
+  <div class="problem-list">
+    <div class="p-row fade-up d1"><div class="p-n">01</div><div class="p-body"><div class="p-title">Missed Leads After Hours</div><div class="p-desc">Businesses miss leads after hours — no one to qualify, follow up, or book meetings outside 9-5. Every missed lead is money left on the table. The AI Sales Rep closes this gap permanently.</div></div></div>
+    <div class="p-row fade-up d2"><div class="p-n">02</div><div class="p-body"><div class="p-title">Support Tickets Pile Up</div><div class="p-desc">Customers wait days. Churn happens quietly and expensively. One bad support experience costs more than the subscription was worth. AI Support Rep handles tier-1 tickets in seconds, not days.</div></div></div>
+    <div class="p-row fade-up d3"><div class="p-n">03</div><div class="p-body"><div class="p-title">Payroll Is the Largest Expense</div><div class="p-desc">Payroll is the single largest business expense and most of those hours are automatable right now. Businesses paying humans to do what AI can do for a fraction of the cost.</div></div></div>
+    <div class="p-row fade-up d4"><div class="p-n">04</div><div class="p-body"><div class="p-title">They Know AI Is Coming</div><div class="p-desc">Businesses understand AI is coming but don't know how to build it. The gap between knowing and doing is exactly where AKHARA lives. We are the ones who just handle it.</div></div></div>
+    <div class="p-row fade-up d5"><div class="p-n">05</div><div class="p-body"><div class="p-title">Competitors Are Already Moving</div><div class="p-desc">Every day without an AI Employee is a day their competitors move faster, spend less, and capture more. The urgency is real and measurable in dollars lost per day.</div></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ OFFER ═══════════════════════════════ -->
+
+<section style="position:relative;overflow:hidden;margin-top:80px;">
+  <span class="bg-word" style="top:40px;left:-20px;">OFFER</span>
+  <div class="tiers-intro fade-up">
+    <div class="chapter-num">03 &nbsp; The Offer</div>
+    <h2 class="chapter-h">AI <em>Employees</em><br>For Hire</h2>
+    <p style="font-size:clamp(15px,1.4vw,20px);color:rgba(255,255,255,0.35);margin-top:20px;max-width:560px;line-height:1.75;font-weight:300;font-style:italic;">Not software. Not a chatbot. An AI Employee — fully built, deployed, and managed by AKHARA. The client uses it. We maintain it. They can't turn it off without rebuilding their operations.</p>
+  </div>
+  <div class="tiers-scroll-wrap">
+    <div class="tiers-track fade-up">
+      <div class="tier-panel">
+        <img class="tier-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6495.WEBP" alt="Starter">
+        <div class="tier-img-fade"></div>
+        <div class="tier-body">
+          <div class="tier-rank">Entry Level</div>
+          <div class="tier-name">Starter</div>
+          <div class="tier-price">$1,000<small>/mo</small></div>
+          <div class="tier-line" style="background:rgba(200,200,200,0.3)"></div>
+          <div class="tier-desc">1 AI Employee, single function, single channel. Pre-built template role. Perfect entry point for first-time AI adoption.</div>
+          <div class="tier-feats">
+            <div class="tier-feat">1 AI Employee</div>
+            <div class="tier-feat">Single channel</div>
+            <div class="tier-feat">Monthly check-in</div>
+            <div class="tier-feat">+$800/mo per extra employee</div>
+          </div>
+        </div>
+      </div>
+      <div class="tier-panel">
+        <img class="tier-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6497.WEBP" alt="Junior">
+        <div class="tier-img-fade"></div>
+        <div class="tier-body">
+          <div class="tier-rank">Standard</div>
+          <div class="tier-name">Junior</div>
+          <div class="tier-price">$2,500<small>/mo</small></div>
+          <div class="tier-line" style="background:rgba(180,100,20,0.5)"></div>
+          <div class="tier-desc">1 AI Employee, single-function role, 1 communication channel. Standard response logic with monthly performance reporting.</div>
+          <div class="tier-feats">
+            <div class="tier-feat">1 AI Employee</div>
+            <div class="tier-feat">1 channel</div>
+            <div class="tier-feat">Monthly report</div>
+            <div class="tier-feat">+$1,500/mo per extra employee</div>
+          </div>
+        </div>
+      </div>
+      <div class="tier-panel" style="border-color:rgba(201,168,76,0.2)">
+        <img class="tier-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6498.WEBP" alt="Senior">
+        <div class="tier-img-fade"></div>
+        <div class="tier-body">
+          <div class="tier-rank">Most Popular</div>
+          <div class="tier-name">Senior</div>
+          <div class="tier-price">$5,000<small>/mo</small></div>
+          <div class="tier-line" style="background:var(--gold)"></div>
+          <div class="tier-desc">1 AI Employee, multi-function role, up to 3 integrated channels. Full CRM integration and bi-weekly optimization sessions.</div>
+          <div class="tier-feats">
+            <div class="tier-feat">Multi-function role</div>
+            <div class="tier-feat">3 channels</div>
+            <div class="tier-feat">Bi-weekly optimization</div>
+            <div class="tier-feat">+$2,500/mo per extra employee</div>
+          </div>
+        </div>
+      </div>
+      <div class="tier-panel">
+        <img class="tier-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6499.WEBP" alt="Executive">
+        <div class="tier-img-fade"></div>
+        <div class="tier-body">
+          <div class="tier-rank">Premium</div>
+          <div class="tier-name">Executive</div>
+          <div class="tier-price">$10,000<small>/mo</small></div>
+          <div class="tier-line" style="background:rgba(220,220,210,0.4)"></div>
+          <div class="tier-desc">2 AI Employees fully integrated. Full stack — email, chat, voice, internal tools. Weekly optimization and dedicated client portal.</div>
+          <div class="tier-feats">
+            <div class="tier-feat">2 AI Employees</div>
+            <div class="tier-feat">Full channel stack</div>
+            <div class="tier-feat">Weekly optimization</div>
+            <div class="tier-feat">+$3,500/mo per extra employee</div>
+          </div>
+        </div>
+      </div>
+      <div class="tier-panel">
+        <img class="tier-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6500.WEBP" alt="Department">
+        <div class="tier-img-fade"></div>
+        <div class="tier-body">
+          <div class="tier-rank">Enterprise</div>
+          <div class="tier-name">Department</div>
+          <div class="tier-price">Custom<small>/mo</small></div>
+          <div class="tier-line" style="background:rgba(160,98,42,0.5)"></div>
+          <div class="tier-desc">3+ AI Employees operating as a coordinated team. Entire business function replaced. Quarterly strategy reviews included.</div>
+          <div class="tier-feats">
+            <div class="tier-feat">3+ AI Employees</div>
+            <div class="tier-feat">Integrated team</div>
+            <div class="tier-feat">Quarterly strategy</div>
+            <div class="tier-feat">$4,000–$6,000 per employee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="setup-note fade-up">
+    <div class="sn-label">Setup Fee</div>
+    <div class="sn-text">One-time onboarding fee of 50% of first month's retainer. Non-negotiable. Covers build, testing, and deployment. Serious clients don't push back. Unserious clients self-select out — which is the point.</div>
+  </div>
+</section>
+
+<!-- ROLES -->
+
+<div class="roles-wrap" style="margin-top:80px;">
+  <div class="chapter-num fade-up">The 5 AI Employee Roles</div>
+  <div class="roles-grid fade-up d1">
+    <div class="role-item"><div class="role-symbol">◈</div><div class="role-name">AI Sales Rep</div><div class="role-desc">Qualifies leads, runs follow-up sequences, books meetings. Works 24/7 without commission. Never misses a lead after hours.</div></div>
+    <div class="role-item"><div class="role-symbol">◉</div><div class="role-name">AI Support Rep</div><div class="role-desc">Handles tier-1 tickets, resolves issues, escalates edge cases. Response time drops from days to seconds. Churn reduced immediately.</div></div>
+    <div class="role-item"><div class="role-symbol">◎</div><div class="role-name">AI Receptionist</div><div class="role-desc">Answers calls, books appointments, captures intake. Professional, consistent, always available. Frees humans for high-value work.</div></div>
+    <div class="role-item"><div class="role-symbol">⊕</div><div class="role-name">AI Ops Assistant</div><div class="role-desc">Internal reporting, task routing, workflow automation. Connects systems that don't talk to each other. Removes friction silently.</div></div>
+    <div class="role-item"><div class="role-symbol">⊗</div><div class="role-name">AI Marketing Assistant</div><div class="role-desc">Drafts content, schedules posts, monitors performance. Consistent brand voice across all channels without a full-time hire.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ STACK ═══════════════════════════════ -->
+
+<div class="hr"></div>
+<div class="stack-wrap" style="margin-top:140px;">
+  <div class="chapter fade-up">
+    <div class="chapter-num">04 &nbsp; The Stack</div>
+    <h2 class="chapter-h">Tools That<br><em>Run AKHARA</em></h2>
+  </div>
+  <div class="stack-list">
+    <div class="stack-row fade-up d1"><div><div class="s-name">Claude Max</div><div class="s-role">Strategy / Code / Copy / Builds</div></div><div class="s-desc">The brain behind every AI Employee. Every system prompt, every piece of copy, every client deliverable built here. The tool that makes everything else possible.</div><div class="s-cost">Already paying</div></div>
+    <div class="stack-row fade-up d2"><div><div class="s-name">Make.com</div><div class="s-role">Automation Layer</div></div><div class="s-desc">Connects AI Employees to client tools — CRMs, email, Slack, calendars. The invisible glue that makes the whole system function without code on the client side.</div><div class="s-cost">Free tier</div></div>
+    <div class="stack-row fade-up d3"><div><div class="s-name">Midjourney</div><div class="s-role">Visual Assets</div></div><div class="s-desc">Cinematic brand imagery, client ad creatives, all visual production. AKHARA's entire visual identity was built with this tool. An art department for $10/month.</div><div class="s-cost">$10/month</div></div>
+    <div class="stack-row fade-up d1"><div><div class="s-name">CapCut Pro</div><div class="s-role">Video Ad Creatives</div></div><div class="s-desc">Animates Midjourney assets into video ads for clients on Paid Ads and Video Scripts services. The bridge between static visuals and motion content.</div><div class="s-cost">Already paying</div></div>
+    <div class="stack-row fade-up d2"><div><div class="s-name">Notion</div><div class="s-role">Client Portals / SOPs</div></div><div class="s-desc">Client onboarding docs, AI Employee specifications, standard operating procedures. Every client gets their own dedicated workspace on day one.</div><div class="s-cost">Free tier</div></div>
+    <div class="stack-row fade-up d3"><div><div class="s-name">Google Drive</div><div class="s-role">Asset Storage & Delivery</div></div><div class="s-desc">Client deliverables, brand assets, all output files. Every client has a dedicated folder. Clean, organised, permanent record of all work delivered.</div><div class="s-cost">Free</div></div>
+  </div>
+  <div style="padding:32px;border:1px solid rgba(201,168,76,0.1);margin-top:2px;display:flex;align-items:center;gap:20px;" class="fade-up">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:48px;color:var(--gold);font-weight:200;">$10</span>
+    <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:0.15em;text-transform:uppercase;">Total additional monthly overhead to run AKHARA at full capacity</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ BUILD ═══════════════════════════════ -->
+
+<div class="full-img-section">
+  <img class="full-img curtain" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6520.WEBP" alt="Build" id="buildImg">
+  <div class="full-img-caption">05 — The Build Process</div>
+</div>
+
+<div class="build-wrap" style="margin-top:140px;">
+  <div class="chapter fade-up">
+    <div class="chapter-num">05 &nbsp; The Build</div>
+    <h2 class="chapter-h">How To Build<br><em>An AI Employee</em></h2>
+  </div>
+  <div class="build-list">
+    <div class="build-row fade-up d1"><div class="b-num">01</div><div><div class="b-title">Define The Role</div><div class="b-desc">Identify the exact business function being replaced. One role per employee — no trying to make one AI do everything. Clarity of role equals quality of output. Sales Rep, Support Rep, Receptionist, Ops Assistant, or Marketing Assistant. Pick one. Build it perfectly.</div></div></div>
+    <div class="build-row fade-up d2"><div class="b-num">02</div><div><div class="b-title">Gather The Context</div><div class="b-desc">Interview the client for 60 minutes. Extract their tone of voice, common customer questions, escalation scenarios, what good looks like, what failure looks like. This becomes the AI Employee's knowledge base. The more context you gather, the better the output. This step is what separates AKHARA from generic chatbot builders.</div></div></div>
+    <div class="build-row fade-up d3"><div class="b-num">03</div><div><div class="b-title">Build The System Prompt</div><div class="b-desc">Write the AI Employee's brain using Claude API. Define persona, knowledge base, response logic, escalation triggers, and tone. This is the core IP — the thing that makes AKHARA's employees different. Spend 80% of your build time here. A bad system prompt produces a bad employee. A great one produces something that feels eerily human.</div></div></div>
+    <div class="build-row fade-up d1"><div class="b-num">04</div><div><div class="b-title">Connect The Channels</div><div class="b-desc">Use Make.com to connect to the client's existing tools — email inboxes, CRM systems, calendar apps, chat widgets, phone systems. No code required on the client side. They get a demo link and see their AI Employee working in their own environment on day one.</div></div></div>
+    <div class="build-row fade-up d2"><div class="b-num">05</div><div><div class="b-title">Test & Stress Test</div><div class="b-desc">Run 48 hours of internal testing. Try to break it. Submit edge cases, offensive inputs, out-of-scope questions. Document how it responds. Fix every failure before the client sees it. Nothing ships until it handles the worst case scenario gracefully. Your reputation depends on this step.</div></div></div>
+    <div class="build-row fade-up d3"><div class="b-num">06</div><div><div class="b-title">Deploy & Maintain</div><div class="b-desc">Go live. Target: 2 weeks from signed contract to live deployment. Then monthly or bi-weekly check-ins depending on tier. Review performance data, improve response quality, expand capabilities. This ongoing maintenance is what justifies the retainer indefinitely — and what clients can't do without you.</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ AVATARS ═══════════════════════════════ -->
+
+<div class="avatars-wrap">
+  <div class="chapter fade-up">
+    <div class="chapter-num">06 &nbsp; The Workforce</div>
+    <h2 class="chapter-h">Meet The<br><em>AI Employees</em></h2>
+  </div>
+  <p style="font-size:clamp(15px,1.4vw,19px);color:rgba(255,255,255,0.3);margin-top:20px;max-width:500px;line-height:1.75;font-weight:300;font-style:italic;" class="fade-up d1">They don't take sick days. They don't ask for raises. They don't sleep. They don't quit.</p>
+  <div class="avatar-grid">
+    <div class="av-item fade-up d1"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6495.WEBP" alt="Starter"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Starter</div><div class="av-role">Entry Level · $1,000/mo</div></div></div>
+    <div class="av-item fade-up d2"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6497.WEBP" alt="Junior"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Junior</div><div class="av-role">Standard · $2,500/mo</div></div></div>
+    <div class="av-item fade-up d3"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6498.WEBP" alt="Senior"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Senior</div><div class="av-role">Popular · $5,000/mo</div></div></div>
+    <div class="av-item fade-up d4"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6499.WEBP" alt="Executive"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Executive</div><div class="av-role">Premium · $10,000/mo</div></div></div>
+    <div class="av-item fade-up d1"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6500.WEBP" alt="Department"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Department</div><div class="av-role">Enterprise · Custom</div></div></div>
+    <div class="av-item fade-up d2"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6526.JPG" alt="The Closer"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Closer</div><div class="av-role">AI Sales Rep</div></div></div>
+    <div class="av-item fade-up d3"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6527.WEBP" alt="The Architect"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Architect</div><div class="av-role">AI Ops Assistant</div></div></div>
+    <div class="av-item fade-up d4"><img class="av-img" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6528.JPG" alt="The Strategist"><div class="av-veil"></div><div class="av-info"><div class="av-name">The Strategist</div><div class="av-role">AI Marketing Assistant</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ CLIENT ═══════════════════════════════ -->
+
+<div class="hr"></div>
+<div class="client-wrap" style="margin-top:140px;">
+  <div class="chapter fade-up">
+    <div class="chapter-num">07 &nbsp; The Client</div>
+    <h2 class="chapter-h">Who We<br><em>Target</em></h2>
+  </div>
+  <div class="client-grid">
+    <div>
+      <div class="col-label fade-up">Target Industries</div>
+      <div class="target-list">
+        <div class="t-row fade-up d1"><div class="t-name">E-Commerce Brands</div><div class="t-desc">High ticket volume, support overwhelm, leads missed after hours. ROI conversation is trivial — every AI Sales Rep that books one meeting pays for itself that month.</div></div>
+        <div class="t-row fade-up d2"><div class="t-name">Real Estate Agencies</div><div class="t-desc">Enquiries come in at all hours. An AI Receptionist booking viewings at 2am while the agent sleeps is an obvious win. High deal values justify premium pricing easily.</div></div>
+        <div class="t-row fade-up d3"><div class="t-name">Law Firms</div><div class="t-desc">Partner time bills at $500–$1,000/hour. AI Ops Assistant handling admin at $5k/month saves 10+ partner hours. The maths closes itself in the first conversation.</div></div>
+        <div class="t-row fade-up d4"><div class="t-name">SaaS Companies</div><div class="t-desc">Support at scale is their core problem. AI Support Rep handling tier-1 tickets instantly reduces churn. The most repeatable sale in the portfolio.</div></div>
+        <div class="t-row fade-up d5"><div class="t-name">Medical Practices</div><div class="t-desc">Appointment booking, patient intake, follow-up reminders. AI Receptionist frees clinical staff for actual patient care. High trust, high retention, low churn.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="col-label fade-up">How To Close The First Client</div>
+      <div class="close-list">
+        <div class="c-row fade-up d1"><div class="c-n">1</div><div><span class="c-title">Build A Live Demo First</span><span class="c-text">Build a working AI Employee for a fictional business in your target industry before approaching anyone. Let prospects interact with it directly. Seeing is believing. A live demo closes more deals than any pitch deck ever will.</span></div></div>
+        <div class="c-row fade-up d2"><div class="c-n">2</div><div><span class="c-title">Find The Measurable Pain</span><span class="c-text">Ask: "How many leads do you miss after hours?" Get them to put a number on the problem. Pain quantified becomes ROI justified. You're not selling AI — you're selling the solution to a number they already know.</span></div></div>
+        <div class="c-row fade-up d3"><div class="c-n">3</div><div><span class="c-title">Present The Employee Not The Tool</span><span class="c-text">Never say "AI chatbot." Present the AI Employee by name and role: "This is your AI Sales Rep. It handles your leads between 6pm and 9am and books meetings into your calendar." Frame it as a hire, not a subscription.</span></div></div>
+        <div class="c-row fade-up d4"><div class="c-n">4</div><div><span class="c-title">Collect The Setup Fee</span><span class="c-text">50% of first month upfront. Non-negotiable. If they push back on $500 for a $1,000/month service they are not serious. This filter saves you from building for clients who will ghost on payment.</span></div></div>
+        <div class="c-row fade-up d5"><div class="c-n">5</div><div><span class="c-title">Deliver In 2 Weeks</span><span class="c-text">From signed contract to live AI Employee in 14 days maximum. Speed builds trust. Clients who see results fast become long-term retainers. Move fast, communicate daily, over-deliver on timeline.</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ GROWTH ═══════════════════════════════ -->
+
+<div class="hr"></div>
+<div class="growth-wrap" style="margin-top:140px;position:relative;overflow:hidden;">
+  <span class="bg-word" style="bottom:-20px;right:-20px;">$50K</span>
+  <div class="chapter fade-up">
+    <div class="chapter-num">08 &nbsp; The Growth</div>
+    <h2 class="chapter-h">Road To<br><em>$50K Per Month</em></h2>
+  </div>
+  <table class="g-table fade-up d1">
+    <thead><tr><th>Phase</th><th>Timeline</th><th>Clients</th><th>Revenue</th><th>Focus</th></tr></thead>
+    <tbody>
+      <tr><td>Phase 1</td><td>Month 1</td><td>1 client via outreach + demo</td><td class="rev">$2,500–$5,000</td><td>Build the first AI Employee. Close the first client. Prove the system works on a real business. Learn everything theory didn't teach you.</td></tr>
+      <tr><td>Phase 2</td><td>Month 2–3</td><td>3 clients</td><td class="rev">$10,000–$21,000</td><td>Refine onboarding. Build first case study. Convert referrals from client 1. Upgrade client 1 to higher tier.</td></tr>
+      <tr><td>Phase 3</td><td>Month 4–6</td><td>5 clients</td><td class="rev">$25,000–$50,000</td><td>AKHARA site live. Case studies drive inbound. No more cold outreach. Upgrade clients, add AI Employees per account.</td></tr>
+      <tr><td>Phase 4</td><td>Month 7–12</td><td>8+ clients</td><td class="rev">$50,000–$100,000+</td><td>Department tier clients. First team hire. AKHARA becomes the name in the space. Brand compounds without effort.</td></tr>
+    </tbody>
+  </table>
+  <div class="insights fade-up d2">
+    <div class="insight-item"><div class="i-title">The Churn Moat</div><div class="i-text">Once an AI Employee is embedded in a client's operations, removing it means rehiring humans, retraining them, and rebuilding the process. The switching cost is high enough that clients stay because leaving is genuinely painful.</div></div>
+    <div class="insight-item"><div class="i-title">The Market Window</div><div class="i-text">2–3 year window where businesses need AI but can't build it. After that, native SaaS integrations close the gap. Extract hard now. Build AKHARA's reputation during the window so the brand carries beyond it.</div></div>
+    <div class="insight-item"><div class="i-title">The Forever Business</div><div class="i-text">AKHARA as a brand outlives any market window. The offer repositions as technology evolves. Client relationships, reputation, and brand equity compound indefinitely. The agency never expires. The offer just evolves.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ BRAND ═══════════════════════════════ -->
+
+<div class="full-img-section" style="margin-top:140px;">
+  <img class="full-img curtain" src="https://raw.githubusercontent.com/SABLE-Debug/PLAYBOOK/main/IMG_6521.WEBP" alt="Brand" id="brandImg">
+  <div class="full-img-caption">10 — AKHARA Identity</div>
+</div>
+
+<div class="brand-wrap" style="margin-top:140px;">
+  <div class="brand-bg"></div>
+  <div class="brand-content">
+    <div class="chapter fade-up">
+      <div class="chapter-num">10 &nbsp; The Brand</div>
+      <h2 class="chapter-h">AKHARA<br><em>Identity Spec</em></h2>
+    </div>
+    <div class="brand-specs">
+      <div class="b-row fade-up d1"><div class="b-key">Name</div><div class="b-val">AKHARA — always all-caps. Sanskrit for "wrestling arena / training ground." Carries the founder's name invisibly. Never lowercase. Never abbreviated. Never approximate.</div></div>
+      <div class="b-row fade-up d2"><div class="b-key">Positioning</div><div class="b-val">Brutalist luxury. Walks into a room before you do. Premium, discipline-first, zero fluff. Every touchpoint should feel like it costs more than it does.</div></div>
+      <div class="b-row fade-up d3"><div class="b-key">Logo</div><div class="b-val">The Meridian Mark — outer circle, crosshair lines extending beyond it, inner circle at intersection, small apex dot at top of vertical line. Gold on black. Never approximated, never modified, never recreated from memory.</div></div>
+      <div class="b-row fade-up d4">
+        <div class="b-key">Palette</div>
+        <div class="b-val">
+          <div class="swatches">
+            <div class="sw" style="background:#080707" title="Void"></div>
+            <div class="sw" style="background:#f0ece4;border-color:rgba(255,255,255,0.2)" title="White"></div>
+            <div class="sw" style="background:#C9A84C" title="Gold"></div>
+            <div class="sw" style="background:#B8964E" title="Mark Gold"></div>
+            <div class="sw" style="background:#2C1A0E" title="Obsidian Brown"></div>
+            <div class="sw" style="background:#6B3F1F" title="Mahogany"></div>
+            <div class="sw" style="background:#A0622A" title="Cognac"></div>
+            <div class="sw" style="background:#C49A6C" title="Sandstone"></div>
+            <div class="sw" style="background:#F5ECD7" title="Parchment"></div>
+            <div class="sw" style="background:#E8D5B0" title="Ivory"></div>
+          </div>
+        </div>
+      </div>
+      <div class="b-row fade-up d5"><div class="b-key">Typography</div><div class="b-val">Flaviotte / Cormorant Garamond for display and editorial body. Thin tracked caps for labels, navigation, data. Never Inter, never Arial, never system fonts. Typography is the first thing people feel before they read.</div></div>
+      <div class="b-row fade-up d6"><div class="b-key">Tone</div><div class="b-val">Confident. Sharp. No hand-holding. Every word earns its place. The brand speaks once and doesn't repeat itself. Direct without being cold. Premium without being unapproachable. Walks into the room before you do.</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="f-left">
+    <svg viewBox="0 0 512 560" width="24" height="28" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:12px;">
+      <circle cx="256" cy="272" r="168" stroke="#B8964E" stroke-width="1.6" fill="none"/>
+      <circle cx="256" cy="272" r="108" stroke="#B8964E" stroke-width="1.2" fill="none"/>
+      <line x1="256" y1="88" x2="256" y2="480" stroke="#B8964E" stroke-width="1.4"/>
+      <line x1="64" y1="272" x2="448" y2="272" stroke="#B8964E" stroke-width="1.2"/>
+      <line x1="196" y1="210" x2="316" y2="210" stroke="#B8964E" stroke-width="1" opacity="0.8"/>
+      <circle cx="256" cy="96" r="9" fill="#B8964E"/>
+    </svg>
+    <div class="f-brand">AKHARA — AI Employee Agency</div>
+    <div class="f-tag">Internal Playbook — Confidential</div>
+  </div>
+  <div class="f-right">
+    <div class="f-tag">Built to win.<br>Not to explain.</div>
+  </div>
+</footer>
+
+<script>
+// LOADER
+let p = 0;
+const lBar = document.getElementById('lBar');
+const lPct = document.getElementById('lPct');
+const loader = document.getElementById('loader');
+const tick = setInterval(() => {
+  p += Math.random() * 14 + 2;
+  if (p >= 100) { p = 100; clearInterval(tick); setTimeout(() => loader.classList.add('out'), 300); }
+  lBar.style.width = p + '%';
+  lPct.textContent = Math.floor(p) + '%';
+}, 70);
+
+// CURSOR
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
+(function animRing() { rx += (mx-rx)*0.1; ry += (my-ry)*0.1; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animRing); })();
+document.querySelectorAll('a,button,.tier-panel,.stat-item,.av-item,.t-row,.c-row,.build-row,.stack-row,.p-row,.role-item,.insight-item,.b-row').forEach(el => {
+  el.addEventListener('mouseenter', () => { cur.style.transform='translate(-50%,-50%) scale(3)'; ring.style.borderColor='rgba(201,168,76,0.7)'; });
+  el.addEventListener('mouseleave', () => { cur.style.transform='translate(-50%,-50%) scale(1)'; ring.style.borderColor='rgba(201,168,76,0.3)'; });
+});
+
+// SCROLL PROGRESS
+const prog = document.getElementById('prog');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.width = (scrollY/h*100)+'%';
+});
+
+// PARALLAX
+const heroBg = document.getElementById('heroBg');
+window.addEventListener('scroll', () => {
+  if (heroBg) heroBg.style.transform = `scale(1.08) translateY(${scrollY*0.25}px)`;
+  document.querySelectorAll('.full-img').forEach(img => {
+    const rect = img.getBoundingClientRect();
+    const offset = (rect.top + rect.height/2 - window.innerHeight/2) * 0.12;
+    img.style.transform = `scale(1.05) translateY(${offset}px)`;
+  });
+});
+
+// INTERSECTION OBSERVER
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up, .curtain, .reveal-text').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
